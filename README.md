@@ -5,12 +5,40 @@ A static classroom cleaning-zone assignment app. It runs with plain HTML, CSS, a
 ## Features
 
 - Add cleaning zones with a required number of students.
+- Upload a student roster from `.xlsx`, `.xls`, `.csv`, or `.txt`.
 - Generate zone cards and empty assignment slots dynamically.
 - Switch between a modern dashboard theme and a soft pastel card theme.
 - Drag student cards with mouse or touch.
 - Move students between zones or back to the unassigned roster.
-- Lock a zone so random assignment keeps its current students.
-- Randomly fill only remaining empty slots with currently unassigned students.
+- Fill only empty slots with unassigned students.
+- Reshuffle all non-locked zones while preserving locked zones.
+- Print or save only the current cleaning assignment board.
+- Confirm an assignment date and show the elapsed D-day count.
+
+## Student Upload
+
+Use the upload control to select a roster file. The app looks for a column named `이름`, `성명`, `학생명`, `name`, `student`, or `student name`. If no matching header is found, the first column is treated as the student-name column.
+
+Excel files are parsed in the browser with SheetJS loaded from its CDN. CSV and TXT files work without the CDN.
+
+Uploading a new roster clears current assignments so the board can be reassigned from the new student list.
+
+## Random Assignment Modes
+
+- `빈 슬롯 랜덤`: keeps all current assignments and fills only empty slots with unassigned students.
+- `고정 제외 전체 재배정`: keeps zones checked as locked, then reshuffles every student outside locked zones across all unlocked zones.
+
+If no zones are locked, `고정 제외 전체 재배정` shuffles the full roster and assigns students from scratch.
+
+## Print And Save
+
+The print and save buttons target only the cleaning assignment board, not the setup controls or unassigned student list. The board title uses the local computer clock for the current month/date and displays:
+
+```text
+x월 x학년 x반 청소구역
+```
+
+Click `청소구역 확정` to save the confirmation date. The title area then shows how many days have passed as `D+0`, `D+1`, and so on.
 
 ## Data Model
 
@@ -45,9 +73,7 @@ The random assignment logic is in `assignRandomStudents` in `src/main.js`.
 
 ## Local Run
 
-The app can be opened directly with `index.html`.
-
-For a local server:
+Run the local server:
 
 ```bash
 npm run dev
