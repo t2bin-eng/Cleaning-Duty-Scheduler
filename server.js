@@ -13,7 +13,7 @@ const contentTypes = {
   '.svg': 'image/svg+xml',
 };
 
-function resolvePath(url) {
+function resolvePath(url, request) {
   const pathname = decodeURIComponent(new URL(url, `http://localhost:${port}`).pathname);
   const relativePath = pathname.replace(/^\/+/, '') || 'index.html';
   const requestedPath = normalize(join(root, relativePath));
@@ -24,7 +24,9 @@ function resolvePath(url) {
   }
 
   if (!existsSync(requestedPath)) {
-    return null;
+    const acceptsHtml = request.headers.accept?.includes('text/html');
+    const looksLikeAsset = extname(requestedPath);
+    return acceptsHtml && !looksLikeAsset ? join(root, 'index.html') : null;
   }
 
   if (statSync(requestedPath).isDirectory()) {
@@ -35,7 +37,7 @@ function resolvePath(url) {
 }
 
 createServer((request, response) => {
-  const filePath = resolvePath(request.url);
+  const filePath = resolvePath(request.url, request);
 
   if (!filePath || !existsSync(filePath)) {
     response.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
