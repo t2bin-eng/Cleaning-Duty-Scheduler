@@ -46,6 +46,7 @@ createServer((request, response) => {
   }
 
   response.writeHead(200, {
+    'Cache-Control': 'no-store, max-age=0',
     'Content-Type': contentTypes[extname(filePath)] || 'application/octet-stream',
   });
   createReadStream(filePath).pipe(response);
