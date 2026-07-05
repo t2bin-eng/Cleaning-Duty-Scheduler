@@ -1,0 +1,13 @@
+{
+  "name": "cleaning-zone-planner",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "node server.js 5173",
+    "build": "node -e \"console.log('Static app: no build step required')\"",
+    "preview": "node server.js 4173"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}
