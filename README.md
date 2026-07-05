@@ -98,6 +98,8 @@ After deployment, every push to the GitHub `main` branch will trigger a new Verc
 |-- package.json
 |-- README.md
 |-- server.js
+|-- start-app.cmd
+|-- vercel.json
 `-- src
     |-- main.js
     `-- styles.css

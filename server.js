@@ -24,9 +24,8 @@ function resolvePath(url, request) {
   }
 
   if (!existsSync(requestedPath)) {
-    const acceptsHtml = request.headers.accept?.includes('text/html');
     const looksLikeAsset = extname(requestedPath);
-    return acceptsHtml && !looksLikeAsset ? join(root, 'index.html') : null;
+    return looksLikeAsset ? null : join(root, 'index.html');
   }
 
   if (statSync(requestedPath).isDirectory()) {
