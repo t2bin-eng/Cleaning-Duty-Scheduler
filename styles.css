@@ -625,9 +625,23 @@ input:focus {
   }
 }
 
+@page {
+  size: A4 landscape;
+  margin: 6mm;
+}
+
 @media print {
+  html,
+  body {
+    height: 198mm;
+    overflow: hidden;
+    width: 285mm;
+  }
+
   body {
     background: #fff;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
   }
 
   .topbar,
@@ -641,25 +655,118 @@ input:focus {
 
   .app {
     background: #fff !important;
-    min-height: auto;
+    height: 198mm;
+    min-height: 0;
+    overflow: hidden;
     padding: 0;
+    width: 285mm;
   }
 
   .workspace {
     display: block;
+    height: 100%;
     max-width: none;
+    overflow: hidden;
   }
 
   .print-sheet {
-    padding: 16px;
+    --print-card-padding: 5mm;
+    --print-cols: 3;
+    --print-font-size: 9pt;
+    --print-gap: 3mm;
+    --print-rows: 2;
+    --print-slot-height: 8mm;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    height: 100%;
+    overflow: hidden;
+    padding: 0;
+    width: 100%;
+  }
+
+  .print-title-row {
+    align-items: center;
+    margin-bottom: 3mm;
+  }
+
+  .print-title-row p {
+    font-size: 7pt;
+    margin: 0 0 1mm;
+  }
+
+  .print-title-row h2 {
+    font-size: 12pt;
+    line-height: 1;
+  }
+
+  .print-title-row strong {
+    font-size: 12pt;
   }
 
   .zone-board {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    display: grid;
+    gap: var(--print-gap);
+    grid-template-columns: repeat(var(--print-cols), minmax(0, 1fr));
+    grid-template-rows: repeat(var(--print-rows), minmax(0, 1fr));
+    height: 100%;
+    overflow: hidden;
   }
 
   .zone-card {
+    border-radius: 4mm !important;
     break-inside: avoid;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+    padding: var(--print-card-padding);
+    page-break-inside: avoid;
     box-shadow: none;
+  }
+
+  .zone-header {
+    align-items: start;
+    gap: 2mm;
+  }
+
+  .zone-header h2 {
+    font-size: calc(var(--print-font-size) * 1.35);
+    line-height: 1.1;
+  }
+
+  .zone-header p {
+    font-size: var(--print-font-size);
+    line-height: 1.1;
+    margin-top: 1mm;
+  }
+
+  .square-button,
+  .zone-options {
+    display: none !important;
+  }
+
+  .slots {
+    align-content: start;
+    gap: 1.3mm;
+    margin-top: 2mm;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .slot {
+    min-height: var(--print-slot-height);
+  }
+
+  .slot.empty {
+    display: none;
+  }
+
+  .student-card {
+    border-radius: 2mm !important;
+    box-shadow: none;
+    font-size: var(--print-font-size);
+    min-height: var(--print-slot-height);
+    padding: 1mm 2mm;
   }
 }

@@ -519,6 +519,7 @@ function handleAction(event) {
   }
 
   if (action === 'print') {
+    preparePrintLayout();
     window.print();
   }
 
@@ -711,12 +712,46 @@ function getStylesForExport() {
     .join('\n');
 }
 
+function preparePrintLayout() {
+  const sheet = document.querySelector('#print-sheet');
+  if (!sheet) {
+    return;
+  }
+
+  const zoneCount = Math.max(zones.length, 1);
+  const maxCapacity = Math.max(...zones.map((zone) => zone.capacity), 1);
+  const pageRatio = 1.42;
+  let columns = Math.ceil(Math.sqrt(zoneCount * pageRatio));
+
+  if (zoneCount <= 2) {
+    columns = zoneCount;
+  } else if (zoneCount <= 4) {
+    columns = 2;
+  }
+
+  columns = Math.min(Math.max(columns, 1), Math.min(zoneCount, 6));
+  const rows = Math.ceil(zoneCount / columns);
+  const density = Math.max(rows, Math.ceil(maxCapacity / 4));
+  const fontSize = Math.max(7, Math.min(12, 13 - density));
+  const slotHeight = Math.max(6, Math.min(12, 15 - density));
+  const cardPadding = Math.max(3, Math.min(8, 10 - rows));
+  const gap = Math.max(2, Math.min(5, 7 - rows));
+
+  sheet.style.setProperty('--print-cols', columns);
+  sheet.style.setProperty('--print-rows', rows);
+  sheet.style.setProperty('--print-font-size', `${fontSize}pt`);
+  sheet.style.setProperty('--print-slot-height', `${slotHeight}mm`);
+  sheet.style.setProperty('--print-card-padding', `${cardPadding}mm`);
+  sheet.style.setProperty('--print-gap', `${gap}mm`);
+}
+
 async function exportBoardImage() {
   const sheet = document.querySelector('#print-sheet');
   if (!sheet) {
     return;
   }
 
+  preparePrintLayout();
   const clone = sheet.cloneNode(true);
   const width = Math.max(sheet.scrollWidth, 900);
   const height = sheet.scrollHeight + 24;
@@ -825,3 +860,5 @@ function dragEnd(event) {
 }
 
 render();
+
+window.addEventListener('beforeprint', preparePrintLayout);
