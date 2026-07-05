@@ -1,23 +1,61 @@
-const students = [
-  { id: 1, name: '김민준' },
-  { id: 2, name: '이서연' },
-  { id: 3, name: '박도윤' },
-  { id: 4, name: '최하린' },
-  { id: 5, name: '정지우' },
-  { id: 6, name: '강유준' },
-  { id: 7, name: '조아린' },
-  { id: 8, name: '윤서준' },
-  { id: 9, name: '장예나' },
-  { id: 10, name: '임시우' },
-  { id: 11, name: '한지민' },
-  { id: 12, name: '오하준' },
+const labels = {
+  add: '\ucd94\uac00',
+  allAssigned: '\ubaa8\ub4e0 \ud559\uc0dd\uc774 \ubc30\uc815\ub418\uc5c8\uc2b5\ub2c8\ub2e4.',
+  assigned: '\ubc30\uc815',
+  capacity: '\ud544\uc694 \uc778\uc6d0',
+  cleanTitle: '\uccad\uc18c \uad6c\uc5ed \ubc30\uce58\ub3c4',
+  classLabel: '\ubc18',
+  confirm: '\uccad\uc18c\uad6c\uc5ed \ud655\uc815',
+  createFrame: '\ud2c0 \uc0dd\uc131',
+  daysElapsedPrefix: 'D+',
+  deleteZone: '\uad6c\uc5ed \uc0ad\uc81c',
+  exportImage: '\ud30c\uc77c\ub85c \uc800\uc7a5',
+  emptySlot: '\ube48 \uc2ac\ub86f',
+  fillRandom: '\ube48 \uc2ac\ub86f \ub79c\ub364',
+  fixedZone: '\uad6c\uc5ed \uace0\uc815',
+  gradeLabel: '\ud559\ub144',
+  imported: '\uba85\uc758 \ud559\uc0dd\uc744 \ubd88\ub7ec\uc654\uc2b5\ub2c8\ub2e4.',
+  importFail: '\ud30c\uc77c\uc744 \uc77d\uc9c0 \ubabb\ud588\uc2b5\ub2c8\ub2e4. .xlsx, .csv \ud30c\uc77c\uc744 \ud655\uc778\ud574 \uc8fc\uc138\uc694.',
+  importStudents: '\ud559\uc0dd \uba85\ub82c \uc5c5\ub85c\ub4dc',
+  modern: '\ubaa8\ub358',
+  modernTitle: '\ubaa8\ub358\ud55c \ub300\uc2dc\ubcf4\ub4dc \uc2a4\ud0c0\uc77c',
+  monthLabel: '\uc6d4',
+  pastel: '\ud30c\uc2a4\ud154',
+  pastelTitle: '\ud30c\uc2a4\ud154\ud1a4 \uce74\ub4dc \ub808\uc774\uc544\uc6c3',
+  peopleAssigned: '\uba85 \ubc30\uc815',
+  print: '\uc778\uc1c4',
+  randomize: '\ub79c\ub364 \ubc30\uce58',
+  reshuffle: '\uace0\uc815 \uc81c\uc678 \uc804\uccb4 \uc7ac\ubc30\uc815',
+  reset: '\ucd08\uae30\ud654',
+  roster: '\ubc30\uc815\ub418\uc9c0 \uc54a\uc740 \ud559\uc0dd',
+  slots: '\uc2ac\ub86f',
+  student: '\ud559\uc0dd',
+  themeSelect: '\ud14c\ub9c8 \uc120\ud0dd',
+  zoneName: '\uad6c\uc5ed \uc774\ub984',
+  zonePlaceholder: '\uc608: \uad50\uc2e4 \uc55e\ubb38',
+  zoneSetupHint: '\uad6c\uc5ed\uc744 \ucd94\uac00\ud55c \ub4a4 \ud2c0\uc744 \uc0dd\uc131\ud574 \uc8fc\uc138\uc694.',
+};
+
+let students = [
+  { id: 1, name: '\uae40\ubbfc\uc900' },
+  { id: 2, name: '\uc774\uc11c\uc5f0' },
+  { id: 3, name: '\ubc15\ub3c4\uc724' },
+  { id: 4, name: '\ucd5c\ud558\ub9b0' },
+  { id: 5, name: '\uc815\uc9c0\uc6b0' },
+  { id: 6, name: '\uac15\uc720\uc900' },
+  { id: 7, name: '\uc870\uc544\ub9b0' },
+  { id: 8, name: '\uc724\uc11c\uc900' },
+  { id: 9, name: '\uc7a5\uc608\ub098' },
+  { id: 10, name: '\uc784\uc2dc\uc6b0' },
+  { id: 11, name: '\ud55c\uc9c0\ubbfc' },
+  { id: 12, name: '\uc624\ud558\uc900' },
 ];
 
 let zones = [
-  createZone('교실 앞문', 2),
-  createZone('칠판', 1),
-  createZone('분리수거', 2),
-  createZone('복도', 3),
+  createZone('\uad50\uc2e4 \uc55e\ubb38', 2),
+  createZone('\uce60\ud310', 1),
+  createZone('\ubd84\ub9ac\uc218\uac70', 2),
+  createZone('\ubcf5\ub3c4', 3),
 ];
 
 const state = {
@@ -26,6 +64,11 @@ const state = {
   dragging: null,
   draftZoneName: '',
   draftCapacity: 1,
+  month: new Date().getMonth() + 1,
+  grade: 1,
+  classNumber: 1,
+  confirmedAt: localStorage.getItem('cleaning-zone-confirmed-at') || '',
+  uploadMessage: '',
 };
 
 const pastelColors = ['mint', 'peach', 'lilac', 'sky', 'lemon', 'rose'];
@@ -85,7 +128,63 @@ function assignRandomStudents(currentZones, unassignedStudentIds) {
   });
 }
 
+function reshuffleUnlockedAssignments(currentZones) {
+  const fixedStudentIds = new Set(
+    currentZones
+      .filter((zone) => zone.fixed)
+      .flatMap((zone) => zone.assignedStudentIds),
+  );
+  const pool = shuffleItems(students.filter((student) => !fixedStudentIds.has(student.id)).map((student) => student.id));
+  let cursor = 0;
+
+  return currentZones.map((zone) => {
+    if (zone.fixed) {
+      return zone;
+    }
+
+    const nextStudents = pool.slice(cursor, cursor + zone.capacity);
+    cursor += nextStudents.length;
+
+    return {
+      ...zone,
+      assignedStudentIds: nextStudents,
+    };
+  });
+}
+
+function getBoardTitle() {
+  return `${state.month}\uc6d4 ${state.grade}\ud559\ub144 ${state.classNumber}\ubc18 \uccad\uc18c\uad6c\uc5ed`;
+}
+
+function getTodayLabel() {
+  const today = new Date();
+  return `${today.getFullYear()}.${String(today.getMonth() + 1).padStart(2, '0')}.${String(today.getDate()).padStart(2, '0')}`;
+}
+
+function getDaysElapsed() {
+  if (!state.confirmedAt) {
+    return '';
+  }
+
+  const confirmedDate = new Date(state.confirmedAt);
+  const today = new Date();
+  const start = new Date(confirmedDate.getFullYear(), confirmedDate.getMonth(), confirmedDate.getDate());
+  const end = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  const dayMs = 24 * 60 * 60 * 1000;
+  return `${labels.daysElapsedPrefix}${Math.max(Math.floor((end - start) / dayMs), 0)}`;
+}
+
 function moveStudent(studentId, targetZoneId) {
+  if (targetZoneId !== 'unassigned') {
+    const targetZone = zones.find((zone) => zone.id === targetZoneId);
+    const alreadyInTarget = targetZone?.assignedStudentIds.includes(studentId);
+
+    if (!targetZone || (!alreadyInTarget && targetZone.assignedStudentIds.length >= targetZone.capacity)) {
+      render();
+      return;
+    }
+  }
+
   const withoutStudent = zones.map((zone) => ({
     ...zone,
     assignedStudentIds: zone.assignedStudentIds.filter((id) => id !== studentId),
@@ -98,7 +197,7 @@ function moveStudent(studentId, targetZoneId) {
   }
 
   zones = withoutStudent.map((zone) => {
-    if (zone.id !== targetZoneId || zone.assignedStudentIds.length >= zone.capacity) {
+    if (zone.id !== targetZoneId) {
       return zone;
     }
 
@@ -113,14 +212,18 @@ function moveStudent(studentId, targetZoneId) {
 function icon(name) {
   const icons = {
     add: '+',
-    check: '✓',
-    shuffle: '⇄',
-    reset: '↺',
-    trash: '×',
-    lock: 'L',
-    unlock: 'U',
-    modern: '▦',
-    pastel: '✦',
+    check: 'OK',
+    confirm: 'Done',
+    file: 'File',
+    print: 'Print',
+    shuffle: 'R',
+    reset: 'Reset',
+    save: 'Save',
+    trash: 'X',
+    lock: 'Lock',
+    unlock: 'Open',
+    modern: 'Grid',
+    pastel: 'Star',
   };
   return `<span class="button-icon" aria-hidden="true">${icons[name]}</span>`;
 }
@@ -151,89 +254,141 @@ function render() {
   const unassignedStudents = students.filter((student) => !assignedStudentIds.has(student.id));
   const assignedCount = assignedStudentIds.size;
   const totalSlots = zones.reduce((sum, zone) => sum + zone.capacity, 0);
+  const daysElapsed = getDaysElapsed();
 
   app.className = `app ${state.theme}`;
   app.innerHTML = `
     <header class="topbar">
       <div>
         <p class="eyebrow">Cleaning Zone Planner</p>
-        <h1>청소 구역 배치도</h1>
+        <h1>${labels.cleanTitle}</h1>
       </div>
-      <div class="theme-switch" aria-label="테마 선택">
-        <button class="${state.theme === 'modern' ? 'active' : ''}" type="button" data-action="theme" data-theme="modern" title="모던한 대시보드 스타일">
-          ${icon('modern')} 모던
-        </button>
-        <button class="${state.theme === 'pastel' ? 'active' : ''}" type="button" data-action="theme" data-theme="pastel" title="파스텔톤 카드 레이아웃">
-          ${icon('pastel')} 파스텔
-        </button>
+      <div class="topbar-tools">
+        <div class="theme-switch" aria-label="${labels.themeSelect}">
+          <button class="${state.theme === 'modern' ? 'active' : ''}" type="button" data-action="theme" data-theme="modern" title="${labels.modernTitle}">
+            ${icon('modern')} ${labels.modern}
+          </button>
+          <button class="${state.theme === 'pastel' ? 'active' : ''}" type="button" data-action="theme" data-theme="pastel" title="${labels.pastelTitle}">
+            ${icon('pastel')} ${labels.pastel}
+          </button>
+        </div>
       </div>
     </header>
+
+    <section class="board-title-panel">
+      <div>
+        <p class="eyebrow">${getTodayLabel()}</p>
+        <h2>${getBoardTitle()}</h2>
+      </div>
+      <div class="day-counter">${daysElapsed || '\uc544\uc9c1 \ud655\uc815 \uc804'}</div>
+    </section>
 
     <section class="setup-panel">
       <div class="setup-fields">
         <label>
-          구역 이름
-          <input id="zone-name" value="${escapeHtml(state.draftZoneName)}" placeholder="예: 교실 앞문" />
+          ${labels.monthLabel}
+          <input id="setting-month" min="1" max="12" type="number" value="${state.month}" />
         </label>
         <label>
-          필요 인원
+          ${labels.gradeLabel}
+          <input id="setting-grade" min="1" max="6" type="number" value="${state.grade}" />
+        </label>
+        <label>
+          ${labels.classLabel}
+          <input id="setting-class" min="1" type="number" value="${state.classNumber}" />
+        </label>
+        <label>
+          ${labels.zoneName}
+          <input id="zone-name" value="${escapeHtml(state.draftZoneName)}" placeholder="${labels.zonePlaceholder}" />
+        </label>
+        <label>
+          ${labels.capacity}
           <input id="zone-capacity" min="1" type="number" value="${state.draftCapacity}" />
         </label>
         <button class="icon-button primary" type="button" data-action="add-zone">
-          ${icon('add')} 추가
+          ${icon('add')} ${labels.add}
         </button>
         <button class="icon-button" type="button" data-action="create-frame">
-          ${icon('check')} 틀 생성
+          ${icon('check')} ${labels.createFrame}
         </button>
       </div>
       <div class="stats">
-        <span>학생 ${students.length}명</span>
-        <span>배정 ${assignedCount}명</span>
-        <span>슬롯 ${totalSlots}개</span>
+        <span>${labels.student} ${students.length}\uba85</span>
+        <span>${labels.assigned} ${assignedCount}\uba85</span>
+        <span>${labels.slots} ${totalSlots}\uac1c</span>
       </div>
     </section>
 
+    <section class="upload-panel">
+      <label class="file-upload">
+        ${icon('file')} ${labels.importStudents}
+        <input id="student-file" accept=".xlsx,.xls,.csv,.txt" type="file" />
+      </label>
+      <p>${state.uploadMessage || '.xlsx, .xls, .csv \ud30c\uc77c\uc758 \uc774\ub984/\uc131\uba85 \uc5f4\uc744 \uc77d\uc5b4\uc635\ub2c8\ub2e4.'}</p>
+    </section>
+
     <section class="actions">
-      <button class="icon-button primary" type="button" data-action="randomize">
-        ${icon('shuffle')} 랜덤 배치
+      <button class="icon-button primary" type="button" data-action="fill-random">
+        ${icon('shuffle')} ${labels.fillRandom}
+      </button>
+      <button class="icon-button" type="button" data-action="reshuffle">
+        ${icon('shuffle')} ${labels.reshuffle}
+      </button>
+      <button class="icon-button" type="button" data-action="confirm">
+        ${icon('confirm')} ${labels.confirm}
+      </button>
+      <button class="icon-button" type="button" data-action="print">
+        ${icon('print')} ${labels.print}
+      </button>
+      <button class="icon-button" type="button" data-action="export-image">
+        ${icon('save')} ${labels.exportImage}
       </button>
       <button class="icon-button" type="button" data-action="reset">
-        ${icon('reset')} 초기화
+        ${icon('reset')} ${labels.reset}
       </button>
     </section>
 
     <div class="workspace">
       <aside class="student-roster" data-drop-id="unassigned">
         <div class="section-title">
-          <h2>배정되지 않은 학생</h2>
+          <h2>${labels.roster}</h2>
           <span>${unassignedStudents.length}</span>
         </div>
         <div class="student-list">
           ${
             unassignedStudents.length
               ? unassignedStudents.map((student) => studentCard(student, state.dragging?.studentId)).join('')
-              : '<p class="empty-text">모든 학생이 배정되었습니다.</p>'
+              : `<p class="empty-text">${labels.allAssigned}</p>`
           }
         </div>
       </aside>
 
+      ${renderBoardSnapshot()}
+    </div>
+  `;
+
+  bindEvents();
+}
+
+function renderBoardSnapshot() {
+  return `
+    <section class="print-sheet" id="print-sheet">
+      <div class="print-title-row">
+        <div>
+          <p>${getTodayLabel()}</p>
+          <h2>${getBoardTitle()}</h2>
+        </div>
+        <strong>${getDaysElapsed() || ''}</strong>
+      </div>
       <section class="zone-board">
         ${
           state.frameCreated
             ? zones.map(zoneCard).join('')
-            : '<p class="empty-text">구역을 추가한 뒤 틀을 생성해 주세요.</p>'
+            : `<p class="empty-text">${labels.zoneSetupHint}</p>`
         }
       </section>
-    </div>
-
-    ${
-      state.dragging
-        ? `<div class="drag-preview" style="left:${state.dragging.x - state.dragging.offsetX}px; top:${state.dragging.y - state.dragging.offsetY}px; width:${state.dragging.width}px;">${escapeHtml(getStudentById(state.dragging.studentId).name)}</div>`
-        : ''
-    }
+    </section>
   `;
-
-  bindEvents();
 }
 
 function zoneCard(zone, index) {
@@ -246,7 +401,7 @@ function zoneCard(zone, index) {
     `)
     .join('');
   const emptySlotMarkup = Array.from({ length: emptySlots })
-    .map(() => '<div class="slot empty">빈 슬롯</div>')
+    .map(() => `<div class="slot empty">${labels.emptySlot}</div>`)
     .join('');
 
   return `
@@ -254,21 +409,21 @@ function zoneCard(zone, index) {
       <div class="zone-header">
         <div>
           <h2>${escapeHtml(zone.name)}</h2>
-          <p>${zone.assignedStudentIds.length}/${zone.capacity}명 배정</p>
+          <p>${zone.assignedStudentIds.length}/${zone.capacity}${labels.peopleAssigned}</p>
         </div>
-        <button class="square-button" type="button" data-action="remove-zone" data-zone-id="${zone.id}" title="구역 삭제">
+        <button class="square-button" type="button" data-action="remove-zone" data-zone-id="${zone.id}" title="${labels.deleteZone}">
           ${icon('trash')}
         </button>
       </div>
 
       <div class="zone-options">
         <label class="capacity-control">
-          인원
+          ${labels.capacity.replace('\ud544\uc694 ', '')}
           <input min="1" type="number" value="${zone.capacity}" data-action="capacity" data-zone-id="${zone.id}" />
         </label>
         <label class="lock-toggle">
           <input ${zone.fixed ? 'checked' : ''} type="checkbox" data-action="fixed" data-zone-id="${zone.id}" />
-          ${icon(zone.fixed ? 'lock' : 'unlock')} 구역 고정
+          ${icon(zone.fixed ? 'lock' : 'unlock')} ${labels.fixedZone}
         </label>
       </div>
 
@@ -281,6 +436,21 @@ function zoneCard(zone, index) {
 }
 
 function bindEvents() {
+  document.querySelector('#setting-month')?.addEventListener('input', (event) => {
+    state.month = Math.min(Math.max(Number(event.target.value) || 1, 1), 12);
+    render();
+  });
+
+  document.querySelector('#setting-grade')?.addEventListener('input', (event) => {
+    state.grade = Math.max(Number(event.target.value) || 1, 1);
+    render();
+  });
+
+  document.querySelector('#setting-class')?.addEventListener('input', (event) => {
+    state.classNumber = Math.max(Number(event.target.value) || 1, 1);
+    render();
+  });
+
   document.querySelector('#zone-name')?.addEventListener('input', (event) => {
     state.draftZoneName = event.target.value;
   });
@@ -306,6 +476,8 @@ function bindEvents() {
   document.querySelectorAll('[data-student-id]').forEach((element) => {
     element.addEventListener('pointerdown', startDrag);
   });
+
+  document.querySelector('#student-file')?.addEventListener('change', handleStudentFile);
 }
 
 function handleAction(event) {
@@ -326,13 +498,32 @@ function handleAction(event) {
     render();
   }
 
-  if (action === 'randomize') {
+  if (action === 'fill-random') {
     const alreadyAssigned = getAssignedStudentIds();
     const remainingStudentIds = students
       .filter((student) => !alreadyAssigned.has(student.id))
       .map((student) => student.id);
     zones = assignRandomStudents(zones, remainingStudentIds);
     render();
+  }
+
+  if (action === 'reshuffle') {
+    zones = reshuffleUnlockedAssignments(zones);
+    render();
+  }
+
+  if (action === 'confirm') {
+    state.confirmedAt = new Date().toISOString();
+    localStorage.setItem('cleaning-zone-confirmed-at', state.confirmedAt);
+    render();
+  }
+
+  if (action === 'print') {
+    window.print();
+  }
+
+  if (action === 'export-image') {
+    exportBoardImage();
   }
 
   if (action === 'reset') {
@@ -383,6 +574,190 @@ function addZone() {
   render();
 }
 
+function setStudentsFromNames(names) {
+  const uniqueNames = [...new Set(names.map((name) => String(name).trim()).filter(Boolean))];
+
+  if (!uniqueNames.length) {
+    state.uploadMessage = labels.importFail;
+    render();
+    return;
+  }
+
+  students = uniqueNames.map((name, index) => ({
+    id: index + 1,
+    name,
+  }));
+
+  zones = zones.map((zone) => ({
+    ...zone,
+    fixed: false,
+    assignedStudentIds: [],
+  }));
+  state.confirmedAt = '';
+  localStorage.removeItem('cleaning-zone-confirmed-at');
+  state.uploadMessage = `${uniqueNames.length}${labels.imported}`;
+  render();
+}
+
+function extractNamesFromRows(rows) {
+  const cleanRows = rows
+    .map((row) => row.map((cell) => String(cell ?? '').trim()))
+    .filter((row) => row.some(Boolean));
+
+  if (!cleanRows.length) {
+    return [];
+  }
+
+  const header = cleanRows[0].map((cell) => cell.toLowerCase());
+  const nameColumnIndex = header.findIndex((cell) =>
+    ['이름', '성명', '학생명', 'name', 'student', 'student name'].includes(cell),
+  );
+  const columnIndex = nameColumnIndex >= 0 ? nameColumnIndex : 0;
+  const startRow = nameColumnIndex >= 0 ? 1 : 0;
+
+  return cleanRows.slice(startRow).map((row) => row[columnIndex]).filter(Boolean);
+}
+
+function parseDelimitedText(text) {
+  const delimiter = text.includes('\t') ? '\t' : ',';
+  const rows = text
+    .split(/\r?\n/)
+    .map((line) => line.split(delimiter).map((cell) => cell.replace(/^"|"$/g, '').trim()));
+  return extractNamesFromRows(rows);
+}
+
+function readFileAsText(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const buffer = reader.result;
+      const utf8Text = new TextDecoder('utf-8').decode(buffer);
+      if (!utf8Text.includes('\ufffd')) {
+        resolve(utf8Text);
+        return;
+      }
+
+      try {
+        resolve(new TextDecoder('euc-kr').decode(buffer));
+      } catch {
+        resolve(utf8Text);
+      }
+    };
+    reader.onerror = () => reject(reader.error);
+    reader.readAsArrayBuffer(file);
+  });
+}
+
+function readFileAsArrayBuffer(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(reader.error);
+    reader.readAsArrayBuffer(file);
+  });
+}
+
+function loadSheetJs() {
+  if (window.XLSX) {
+    return Promise.resolve(window.XLSX);
+  }
+
+  return new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = 'https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js';
+    script.onload = () => resolve(window.XLSX);
+    script.onerror = () => reject(new Error('SheetJS load failed'));
+    document.head.appendChild(script);
+  });
+}
+
+async function handleStudentFile(event) {
+  const file = event.target.files?.[0];
+  if (!file) {
+    return;
+  }
+
+  try {
+    const extension = file.name.split('.').pop()?.toLowerCase();
+    let names = [];
+
+    if (['csv', 'txt', 'tsv'].includes(extension)) {
+      names = parseDelimitedText(await readFileAsText(file));
+    } else {
+      const XLSX = await loadSheetJs();
+      const workbook = XLSX.read(await readFileAsArrayBuffer(file), { type: 'array' });
+      const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(firstSheet, { header: 1, blankrows: false });
+      names = extractNamesFromRows(rows);
+    }
+
+    setStudentsFromNames(names);
+  } catch (error) {
+    console.error(error);
+    state.uploadMessage = labels.importFail;
+    render();
+  }
+}
+
+function getStylesForExport() {
+  return [...document.styleSheets]
+    .map((sheet) => {
+      try {
+        return [...sheet.cssRules].map((rule) => rule.cssText).join('\n');
+      } catch {
+        return '';
+      }
+    })
+    .join('\n');
+}
+
+async function exportBoardImage() {
+  const sheet = document.querySelector('#print-sheet');
+  if (!sheet) {
+    return;
+  }
+
+  const clone = sheet.cloneNode(true);
+  const width = Math.max(sheet.scrollWidth, 900);
+  const height = sheet.scrollHeight + 24;
+  const html = `
+    <div xmlns="http://www.w3.org/1999/xhtml" class="app ${state.theme} export-root">
+      <style>${getStylesForExport()}</style>
+      ${clone.outerHTML}
+    </div>
+  `;
+  const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">
+      <foreignObject width="100%" height="100%">${html}</foreignObject>
+    </svg>
+  `;
+  const image = new Image();
+  const svgUrl = URL.createObjectURL(new Blob([svg], { type: 'image/svg+xml;charset=utf-8' }));
+
+  image.onload = () => {
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    const context = canvas.getContext('2d');
+    context.fillStyle = '#ffffff';
+    context.fillRect(0, 0, width, height);
+    context.drawImage(image, 0, 0);
+    URL.revokeObjectURL(svgUrl);
+
+    const link = document.createElement('a');
+    link.download = `${getBoardTitle()}-${getTodayLabel()}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  };
+
+  image.onerror = () => {
+    URL.revokeObjectURL(svgUrl);
+    window.print();
+  };
+
+  image.src = svgUrl;
+}
+
 function startDrag(event) {
   event.preventDefault();
   const sourceElement = event.currentTarget;
@@ -424,6 +799,10 @@ function dragMove(event) {
 }
 
 function dragEnd(event) {
+  if (!state.dragging) {
+    return;
+  }
+
   const { studentId, sourceElement } = state.dragging;
   sourceElement.releasePointerCapture(event.pointerId);
   sourceElement.removeEventListener('pointermove', dragMove);

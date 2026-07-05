@@ -37,6 +37,8 @@ button {
 .topbar,
 .setup-panel,
 .actions,
+.board-title-panel,
+.upload-panel,
 .workspace {
   margin: 0 auto;
   max-width: 1280px;
@@ -74,6 +76,12 @@ h1 {
 h2 {
   font-size: 1rem;
   letter-spacing: 0;
+}
+
+.topbar-tools {
+  align-items: center;
+  display: flex;
+  gap: 10px;
 }
 
 .theme-switch {
@@ -129,7 +137,7 @@ h2 {
   display: grid;
   flex: 1;
   gap: 12px;
-  grid-template-columns: minmax(180px, 1fr) 112px auto auto;
+  grid-template-columns: 76px 76px 76px minmax(180px, 1fr) 112px auto auto;
 }
 
 label {
@@ -200,8 +208,68 @@ input:focus {
 }
 
 .actions {
+  flex-wrap: wrap;
   justify-content: flex-end;
   padding: 16px 0;
+}
+
+.board-title-panel,
+.upload-panel {
+  align-items: center;
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(20, 30, 40, 0.08);
+  border-radius: 8px;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  padding: 14px 16px;
+}
+
+.board-title-panel {
+  margin-bottom: 14px;
+}
+
+.board-title-panel h2,
+.print-title-row h2 {
+  font-size: clamp(1.35rem, 3vw, 2rem);
+  line-height: 1.1;
+}
+
+.day-counter {
+  align-items: center;
+  background: #111827;
+  border-radius: 999px;
+  color: #fff;
+  display: inline-flex;
+  font-weight: 900;
+  min-height: 38px;
+  padding: 0 14px;
+  white-space: nowrap;
+}
+
+.upload-panel {
+  color: #657284;
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin-top: 14px;
+}
+
+.file-upload {
+  align-items: center;
+  background: #fff;
+  border: 1px solid #d6dce4;
+  border-radius: 8px;
+  color: #18212d;
+  display: inline-flex;
+  flex-direction: row;
+  gap: 8px;
+  min-height: 42px;
+  padding: 0 14px;
+  white-space: nowrap;
+}
+
+.file-upload input {
+  display: none;
 }
 
 .workspace {
@@ -282,6 +350,31 @@ input:focus {
   display: grid;
   gap: 16px;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+.print-sheet {
+  min-width: 0;
+}
+
+.print-title-row {
+  align-items: end;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.print-title-row p {
+  color: #657284;
+  font-size: 0.92rem;
+  font-weight: 800;
+  margin-bottom: 3px;
+}
+
+.print-title-row strong {
+  color: #111827;
+  font-size: 1.4rem;
+  white-space: nowrap;
 }
 
 .zone-card {
@@ -405,6 +498,8 @@ input:focus {
 }
 
 .app.pastel .setup-panel,
+.app.pastel .board-title-panel,
+.app.pastel .upload-panel,
 .app.pastel .student-roster,
 .app.pastel .zone-card {
   border-color: rgba(109, 85, 68, 0.13);
@@ -412,8 +507,14 @@ input:focus {
 }
 
 .app.pastel .setup-panel,
+.app.pastel .board-title-panel,
+.app.pastel .upload-panel,
 .app.pastel .student-roster {
   background: rgba(255, 252, 248, 0.92);
+}
+
+.app.pastel .day-counter {
+  background: #5a4b64;
 }
 
 .app.pastel .zone-card {
@@ -473,13 +574,26 @@ input:focus {
     grid-template-columns: 1fr;
   }
 
+  .setup-fields {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .setup-fields label:nth-child(4),
+  .setup-fields label:nth-child(5) {
+    grid-column: span 3;
+  }
+
   .student-roster {
     min-height: auto;
     position: static;
   }
 
   .actions,
-  .stats {
+  .stats,
+  .upload-panel,
+  .board-title-panel {
+    align-items: stretch;
+    flex-direction: column;
     justify-content: flex-start;
   }
 }
@@ -491,12 +605,61 @@ input:focus {
   }
 
   .theme-switch button,
-  .actions .icon-button {
+  .actions .icon-button,
+  .file-upload {
     flex: 1;
+  }
+
+  .setup-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .setup-fields label:nth-child(4),
+  .setup-fields label:nth-child(5) {
+    grid-column: auto;
   }
 
   .zone-options {
     align-items: flex-start;
     flex-direction: column;
+  }
+}
+
+@media print {
+  body {
+    background: #fff;
+  }
+
+  .topbar,
+  .setup-panel,
+  .upload-panel,
+  .actions,
+  .student-roster,
+  .board-title-panel {
+    display: none !important;
+  }
+
+  .app {
+    background: #fff !important;
+    min-height: auto;
+    padding: 0;
+  }
+
+  .workspace {
+    display: block;
+    max-width: none;
+  }
+
+  .print-sheet {
+    padding: 16px;
+  }
+
+  .zone-board {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .zone-card {
+    break-inside: avoid;
+    box-shadow: none;
   }
 }
