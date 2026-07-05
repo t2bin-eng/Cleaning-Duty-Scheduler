@@ -380,13 +380,58 @@ function renderBoardSnapshot() {
         </div>
         <strong>${getDaysElapsed() || ''}</strong>
       </div>
-      <section class="zone-board">
+      <section class="zone-board print-card-board">
         ${
           state.frameCreated
             ? zones.map(zoneCard).join('')
             : `<p class="empty-text">${labels.zoneSetupHint}</p>`
         }
       </section>
+      ${renderPrintTable()}
+    </section>
+  `;
+}
+
+function renderPrintTable() {
+  const rows = zones
+    .map((zone, index) => {
+      const assignedNames = zone.assignedStudentIds
+        .map((studentId) => getStudentById(studentId)?.name)
+        .filter(Boolean);
+      const names = assignedNames.length ? assignedNames.join(', ') : '-';
+
+      return `
+        <tr>
+          <td class="print-index">${index + 1}</td>
+          <td class="print-zone-name">${escapeHtml(zone.name)}</td>
+          <td class="print-count">${assignedNames.length}/${zone.capacity}</td>
+          <td class="print-students">${escapeHtml(names)}</td>
+        </tr>
+      `;
+    })
+    .join('');
+
+  return `
+    <section class="print-table-sheet" aria-label="&#51064;&#49604;&#50857; &#52397;&#49548;&#44396;&#50669; &#48176;&#52824;&#54364;">
+      <table class="print-assignment-table">
+        <colgroup>
+          <col class="print-col-index" />
+          <col class="print-col-zone" />
+          <col class="print-col-count" />
+          <col class="print-col-students" />
+        </colgroup>
+        <thead>
+          <tr>
+            <th>&#48264;&#54840;</th>
+            <th>&#52397;&#49548;&#44396;&#50669;</th>
+            <th>&#51064;&#50896;</th>
+            <th>&#45812;&#45817; &#54617;&#49373;</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rows || '<tr><td colspan="4">&#46321;&#47197;&#46108; &#52397;&#49548;&#44396;&#50669;&#51060; &#50630;&#49845;&#45768;&#45796;.</td></tr>'}
+        </tbody>
+      </table>
     </section>
   `;
 }
@@ -719,30 +764,15 @@ function preparePrintLayout() {
   }
 
   const zoneCount = Math.max(zones.length, 1);
-  const maxCapacity = Math.max(...zones.map((zone) => zone.capacity), 1);
-  const pageRatio = 1.42;
-  let columns = Math.ceil(Math.sqrt(zoneCount * pageRatio));
+  const maxAssigned = Math.max(...zones.map((zone) => zone.assignedStudentIds.length), 1);
+  const density = Math.max(zoneCount, Math.ceil(maxAssigned / 2));
+  const fontSize = Math.max(8, Math.min(18, 22 - Math.ceil(density / 2)));
+  const titleSize = Math.max(15, Math.min(24, fontSize + 5));
+  const cellPadding = Math.max(1.2, Math.min(5.5, 7 - density * 0.22));
 
-  if (zoneCount <= 2) {
-    columns = zoneCount;
-  } else if (zoneCount <= 4) {
-    columns = 2;
-  }
-
-  columns = Math.min(Math.max(columns, 1), Math.min(zoneCount, 6));
-  const rows = Math.ceil(zoneCount / columns);
-  const density = Math.max(rows, Math.ceil(maxCapacity / 4));
-  const fontSize = Math.max(7, Math.min(12, 13 - density));
-  const slotHeight = Math.max(6, Math.min(12, 15 - density));
-  const cardPadding = Math.max(3, Math.min(8, 10 - rows));
-  const gap = Math.max(2, Math.min(5, 7 - rows));
-
-  sheet.style.setProperty('--print-cols', columns);
-  sheet.style.setProperty('--print-rows', rows);
-  sheet.style.setProperty('--print-font-size', `${fontSize}pt`);
-  sheet.style.setProperty('--print-slot-height', `${slotHeight}mm`);
-  sheet.style.setProperty('--print-card-padding', `${cardPadding}mm`);
-  sheet.style.setProperty('--print-gap', `${gap}mm`);
+  sheet.style.setProperty('--print-table-font-size', `${fontSize}pt`);
+  sheet.style.setProperty('--print-title-font-size', `${titleSize}pt`);
+  sheet.style.setProperty('--print-cell-padding', `${cellPadding}mm`);
 }
 
 async function exportBoardImage() {

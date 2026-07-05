@@ -356,6 +356,10 @@ input:focus {
   min-width: 0;
 }
 
+.print-table-sheet {
+  display: none;
+}
+
 .print-title-row {
   align-items: end;
   display: flex;
@@ -626,20 +630,21 @@ input:focus {
 }
 
 @page {
-  size: A4 landscape;
-  margin: 6mm;
+  size: A4 portrait;
+  margin: 8mm;
 }
 
 @media print {
   html,
   body {
-    height: 198mm;
+    background: #fff;
+    height: 281mm;
+    margin: 0;
     overflow: hidden;
-    width: 285mm;
+    width: 194mm;
   }
 
   body {
-    background: #fff;
     print-color-adjust: exact;
     -webkit-print-color-adjust: exact;
   }
@@ -649,17 +654,19 @@ input:focus {
   .upload-panel,
   .actions,
   .student-roster,
-  .board-title-panel {
+  .board-title-panel,
+  .print-card-board {
     display: none !important;
   }
 
   .app {
     background: #fff !important;
-    height: 198mm;
+    color: #111827;
+    height: 281mm;
     min-height: 0;
     overflow: hidden;
     padding: 0;
-    width: 285mm;
+    width: 194mm;
   }
 
   .workspace {
@@ -667,106 +674,116 @@ input:focus {
     height: 100%;
     max-width: none;
     overflow: hidden;
+    width: 100%;
   }
 
   .print-sheet {
-    --print-card-padding: 5mm;
-    --print-cols: 3;
-    --print-font-size: 9pt;
-    --print-gap: 3mm;
-    --print-rows: 2;
-    --print-slot-height: 8mm;
+    --print-cell-padding: 4mm;
+    --print-table-font-size: 14pt;
+    --print-title-font-size: 20pt;
     display: grid;
     grid-template-rows: auto 1fr;
     height: 100%;
+    min-height: 0;
     overflow: hidden;
     padding: 0;
     width: 100%;
   }
 
   .print-title-row {
-    align-items: center;
-    margin-bottom: 3mm;
+    align-items: end;
+    border-bottom: 1.5pt solid #111827;
+    display: flex;
+    justify-content: space-between;
+    margin: 0 0 5mm;
+    padding-bottom: 3mm;
   }
 
   .print-title-row p {
-    font-size: 7pt;
+    color: #334155;
+    font-size: 10pt;
+    font-weight: 800;
     margin: 0 0 1mm;
   }
 
   .print-title-row h2 {
-    font-size: 12pt;
-    line-height: 1;
+    color: #111827;
+    font-size: var(--print-title-font-size);
+    line-height: 1.05;
   }
 
   .print-title-row strong {
-    font-size: 12pt;
+    color: #111827;
+    font-size: calc(var(--print-title-font-size) * 0.9);
+    white-space: nowrap;
   }
 
-  .zone-board {
-    display: grid;
-    gap: var(--print-gap);
-    grid-template-columns: repeat(var(--print-cols), minmax(0, 1fr));
-    grid-template-rows: repeat(var(--print-rows), minmax(0, 1fr));
-    height: 100%;
-    overflow: hidden;
-  }
-
-  .zone-card {
-    border-radius: 4mm !important;
-    break-inside: avoid;
-    display: grid;
-    grid-template-rows: auto 1fr;
+  .print-table-sheet {
+    display: block;
     height: 100%;
     min-height: 0;
     overflow: hidden;
-    padding: var(--print-card-padding);
-    page-break-inside: avoid;
-    box-shadow: none;
   }
 
-  .zone-header {
-    align-items: start;
-    gap: 2mm;
+  .print-assignment-table {
+    border-collapse: collapse;
+    height: 100%;
+    table-layout: fixed;
+    width: 100%;
   }
 
-  .zone-header h2 {
-    font-size: calc(var(--print-font-size) * 1.35);
-    line-height: 1.1;
+  .print-col-index {
+    width: 10%;
   }
 
-  .zone-header p {
-    font-size: var(--print-font-size);
-    line-height: 1.1;
-    margin-top: 1mm;
+  .print-col-zone {
+    width: 25%;
   }
 
-  .square-button,
-  .zone-options {
-    display: none !important;
+  .print-col-count {
+    width: 14%;
   }
 
-  .slots {
-    align-content: start;
-    gap: 1.3mm;
-    margin-top: 2mm;
-    min-height: 0;
-    overflow: hidden;
+  .print-col-students {
+    width: 51%;
   }
 
-  .slot {
-    min-height: var(--print-slot-height);
+  .print-assignment-table th,
+  .print-assignment-table td {
+    border: 1.4pt solid #1f2937;
+    color: #111827;
+    font-size: var(--print-table-font-size);
+    line-height: 1.25;
+    padding: var(--print-cell-padding);
+    vertical-align: middle;
   }
 
-  .slot.empty {
-    display: none;
+  .print-assignment-table th {
+    background: #e8edf5;
+    font-weight: 900;
+    text-align: center;
   }
 
-  .student-card {
-    border-radius: 2mm !important;
-    box-shadow: none;
-    font-size: var(--print-font-size);
-    min-height: var(--print-slot-height);
-    padding: 1mm 2mm;
+  .print-assignment-table tbody tr:nth-child(even) td {
+    background: #f7f9fc;
+  }
+
+  .print-index {
+    text-align: center;
+  }
+
+  .print-zone-name {
+    font-weight: 900;
+    text-align: center;
+  }
+
+  .print-count {
+    font-weight: 900;
+    text-align: center;
+  }
+
+  .print-students {
+    font-weight: 800;
+    overflow-wrap: anywhere;
   }
 }

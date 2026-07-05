@@ -32,7 +32,7 @@ If no zones are locked, `고정 제외 전체 재배정` shuffles the full roste
 
 ## Print And Save
 
-The print and save buttons target only the cleaning assignment board, not the setup controls or unassigned student list. The board title uses the local computer clock for the current month/date and displays:
+The print button uses a dedicated A4 table layout with only the cleaning zone, assigned count, and assigned students. It does not print the card controls, empty slots, setup controls, or unassigned student list. The board title uses the local computer clock for the current month/date and displays:
 
 ```text
 x월 x학년 x반 청소구역
