@@ -1,6 +1,6 @@
 import { createReadStream, existsSync, statSync } from 'node:fs';
 import { createServer } from 'node:http';
-import { extname, join, normalize } from 'node:path';
+import { extname, join, normalize, relative } from 'node:path';
 
 const port = Number(process.argv[2] || 5173);
 const root = process.cwd();
@@ -15,14 +15,16 @@ const contentTypes = {
 
 function resolvePath(url) {
   const pathname = decodeURIComponent(new URL(url, `http://localhost:${port}`).pathname);
-  const requestedPath = normalize(join(root, pathname));
+  const relativePath = pathname.replace(/^\/+/, '') || 'index.html';
+  const requestedPath = normalize(join(root, relativePath));
+  const rootRelativePath = relative(root, requestedPath);
 
-  if (!requestedPath.startsWith(root)) {
+  if (rootRelativePath.startsWith('..') || rootRelativePath === '..') {
     return null;
   }
 
   if (!existsSync(requestedPath)) {
-    return join(root, 'index.html');
+    return null;
   }
 
   if (statSync(requestedPath).isDirectory()) {
@@ -36,7 +38,7 @@ createServer((request, response) => {
   const filePath = resolvePath(request.url);
 
   if (!filePath || !existsSync(filePath)) {
-    response.writeHead(404);
+    response.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
     response.end('Not found');
     return;
   }
