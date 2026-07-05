@@ -3,11 +3,12 @@ import { createServer } from 'node:http';
 import { extname, join, normalize, relative } from 'node:path';
 
 const port = Number(process.argv[2] || 5173);
-const root = process.cwd();
+const root = normalize(join(process.cwd(), process.argv[3] || '.'));
 
 const contentTypes = {
   '.css': 'text/css; charset=utf-8',
   '.html': 'text/html; charset=utf-8',
+  '.ico': 'image/x-icon',
   '.js': 'text/javascript; charset=utf-8',
   '.json': 'application/json; charset=utf-8',
   '.svg': 'image/svg+xml',

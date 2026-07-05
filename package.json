@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "node server.js 5173",
-    "build": "node -e \"console.log('Static app: no build step required')\"",
+    "build": "node --check src/main.js && node --check server.js",
     "preview": "node server.js 4173"
   },
   "dependencies": {},

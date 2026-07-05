@@ -85,7 +85,7 @@ git push -u origin main
 3. Import the GitHub repository.
 4. Framework Preset: `Other`.
 5. Build Command: leave empty or use `npm run build`.
-6. Output Directory: leave empty.
+6. Output Directory: leave empty. Do not set it to `public` or `dist`.
 7. Click `Deploy`.
 
 After deployment, every push to the GitHub `main` branch will trigger a new Vercel deployment.
